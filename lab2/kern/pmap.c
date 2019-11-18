@@ -103,7 +103,7 @@ boot_alloc(uint32_t n)
 	//
 	// LAB 2: Your code here.
 	result=nextfree;
-	if(n>0){															
+	if(n>0){
 		nextfree= ROUNDUP(nextfree+n, PGSIZE);
 	}
 	if(PADDR(nextfree)>=(npages*PGSIZE)){
@@ -227,12 +227,13 @@ mem_init(void)
 
 	// Some more checks, only possible after kern_pgdir is installed.
 	check_page_installed_pgdir();
-
+/*
 	for(int i=0;i<1024;i++){
 	if(kern_pgdir[i]!=0){
 		cprintf("%d,%x\n",i,kern_pgdir+i*PTSIZE);
 	}
 	}
+	*/
 	
 }
 

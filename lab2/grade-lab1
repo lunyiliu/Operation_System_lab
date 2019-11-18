@@ -10,35 +10,19 @@ r = Runner(save("jos.out"),
 def test_jos():
     r.run_qemu()
 
-@test(20, parent=test_jos)
-def test_printf():
-    r.match("6828 decimal is 15254 octal!")
+@test(20, "Physical page allocator", parent=test_jos)
+def test_check_page_alloc():
+    r.match(r"check_page_alloc\(\) succeeded!")
 
-BACKTRACE_RE = r"^ *ebp +f01[0-9a-z]{5} +eip +f0100[0-9a-z]{3} +args +([0-9a-z]+)"
+@test(20, "Page management", parent=test_jos)
+def test_check_page():
+    r.match(r"check_page\(\) succeeded!")
 
-@test(10, parent=test_jos)
-def test_backtrace_count():
-    matches = re.findall(BACKTRACE_RE, r.qemu.output, re.MULTILINE)
-    assert_equal(len(matches), 8)
+@test(20, "Kernel page directory", parent=test_jos)
+def test_check_kern_pgdir():
+    r.match(r"check_kern_pgdir\(\) succeeded!")
 
-@test(10, parent=test_jos)
-def test_backtrace_arguments():
-    matches = re.findall(BACKTRACE_RE, r.qemu.output, re.MULTILINE)
-    assert_equal("\n".join(matches[:7]),
-                 "\n".join("%08x" % n for n in [0,0,1,2,3,4,5]))
-
-@test(5, parent=test_jos)
-def test_backtrace_symbols():
-    matches = re.findall(r"kern/init.c:[0-9]+: +([^+]*)\+", r.qemu.output)
-    assert_equal("\n".join(matches[:7]),
-                 "\n".join(["test_backtrace"] * 6 + ["i386_init"]))
-
-@test(5, parent=test_jos)
-def test_backtrace_lines():
-    matches = re.findall(r"([^ ]*init.c:([0-9]+):) +test_backtrace", r.qemu.output)
-    assert matches, "No line numbers"
-    if any(int(m[1]) < 5 or int(m[1]) > 50 for m in matches):
-        assert_equal("\n".join(m[0] for m in matches),
-                     "Line numbers between 5 and 50")
-
+@test(10, "Page management 2", parent=test_jos)
+def test_check_page_installed_pgdir():
+    r.match(r"check_page_installed_pgdir\(\) succeeded!")
 run_tests()

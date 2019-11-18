@@ -28,6 +28,6 @@ int	fprintf(int fd, const char *fmt, ...);
 int	vfprintf(int fd, const char *fmt, va_list);
 
 // lib/readline.c
-char*	readline(const char *prompt);
+char*	readline(const char *prompt,char** cmd_history, int current_cmd);
 
 #endif /* !JOS_INC_STDIO_H */

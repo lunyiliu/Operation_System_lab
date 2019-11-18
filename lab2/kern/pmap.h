@@ -8,7 +8,7 @@
 
 #include <inc/memlayout.h>
 #include <inc/assert.h>
-
+#include <kern/monitor.h>
 extern char bootstacktop[], bootstack[];
 
 extern struct PageInfo *pages;
@@ -17,7 +17,7 @@ extern size_t npages;
 extern pde_t *kern_pgdir;
 
 
-/* This macro takes a            -- an address that points above
+/* This macro takes a kernel virtual address -- an address that points above
  * KERNBASE, where the machine's maximum 256MB of physical memory is mapped --
  * and returns the corresponding physical address.  It panics if you pass it a
  * non-kernel virtual address.
@@ -61,7 +61,7 @@ struct PageInfo *page_lookup(pde_t *pgdir, void *va, pte_t **pte_store);
 void	page_decref(struct PageInfo *pp);
 
 void	tlb_invalidate(pde_t *pgdir, void *va);
-//get page physical address
+
 static inline physaddr_t
 page2pa(struct PageInfo *pp)
 {
@@ -71,8 +71,10 @@ page2pa(struct PageInfo *pp)
 static inline struct PageInfo*
 pa2page(physaddr_t pa)
 {
-	if (PGNUM(pa) >= npages)
-		panic("pa2page called with invalid pa");
+	if (PGNUM(pa) >= npages){
+		cprintf("pa:%x,PGNUM(pa):%d,npages:%d",pa,PGNUM(pa),npages);
+		mon_backtrace(0,0,0);
+		panic("pa2page called with invalid pa");}
 	return &pages[PGNUM(pa)];
 }
 

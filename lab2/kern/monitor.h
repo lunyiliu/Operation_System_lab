@@ -16,6 +16,6 @@ int mon_help(int argc, char **argv, struct Trapframe *tf);
 int mon_kerninfo(int argc, char **argv, struct Trapframe *tf);
 int mon_backtrace(int argc, char **argv, struct Trapframe *tf);
 int check_lab2();
-int showmappings(uintptr_t va_start,uintptr_t va_end);
-int update_page_perm(uintptr_t va_start,uintptr_t va_end,uint32_t perm);
+int showmappings(int argc, char **argv, struct Trapframe *tf);
+int update_page_perm(int argc, char **argv, struct Trapframe *tf);
 #endif	// !JOS_KERN_MONITOR_H
